@@ -24,19 +24,44 @@ class AIService:
             historical_days = settings.MIN_HISTORICAL_DAYS
             start_date = datetime.now() - timedelta(days=historical_days)
             
+            # Use SQL `date()` function for consistent date results across DB backends
             query = db.query(
-                (Order.created_at.cast('date')).label('date'),
-                (func.sum(Order.total_amount)).label('revenue')
+                func.date(Order.created_at).label('date'),
+                func.sum(Order.total_amount).label('revenue')
             ).filter(Order.created_at >= start_date).group_by(
-                (Order.created_at.cast('date'))
+                func.date(Order.created_at)
             ).order_by('date').all()
             
             if not query or len(query) < 5:
                 logger.warning("Insufficient historical data for forecasting")
                 return []
             
-            dates = [q[0] for q in query]
-            revenues = [float(q[1] or 0) for q in query]
+            # Defensive conversions: ensure dates are date objects and revenues are floats
+            def _to_date(d):
+                if d is None:
+                    return datetime.now().date()
+                if isinstance(d, str):
+                    try:
+                        return datetime.fromisoformat(d).date()
+                    except Exception:
+                        try:
+                            return datetime.strptime(d.split(" ")[0], "%Y-%m-%d").date()
+                        except Exception:
+                            return datetime.now().date()
+                if isinstance(d, datetime):
+                    return d.date()
+                return d
+
+            dates = [_to_date(q[0]) for q in query]
+            revenues = []
+            for q in query:
+                try:
+                    revenues.append(float(q[1] or 0))
+                except Exception:
+                    logger.debug(f"Non-numeric revenue value encountered: {q[1]!r}")
+                    revenues.append(0.0)
+
+            logger.debug(f"Forecast query rows: {len(query)}, sample: {query[:5]}")
 
             # Lightweight linear trend based on first/last historical points.
             first_revenue = revenues[0]
