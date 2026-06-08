@@ -1,6 +1,6 @@
-# RetailPulse AI
+# Smart - pos - AI
 
-**RetailPulse AI** là tên tôi đề xuất cho dự án này: một hệ thống POS thông minh kết hợp dashboard realtime, phân tích doanh thu và dự báo AI để hỗ trợ ra quyết định cho cửa hàng/bán lẻ.
+**Smart - pos - AI** là tên dự án này: một hệ thống POS thông minh kết hợp dashboard realtime, phân tích doanh thu và dự báo AI để hỗ trợ ra quyết định cho cửa hàng/bán lẻ.
 
 ## 1. Mục đích dự án
 
