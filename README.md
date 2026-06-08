@@ -332,5 +332,3 @@ pytest -q
 Điều này giúp dự án có nền tảng kiểm soát chất lượng trước khi deploy.
 
 ---
-
-Nếu bạn muốn, tôi có thể tiếp tục làm tiếp một bước nữa: viết thêm một file `docs/README-VI.md` ngắn gọn hơn cho người mới, hoặc làm sơ đồ kiến trúc Mermaid trong README.
