@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.schemas import Order, OrderCreate, OrderResponse
-from app.services.sales_service import SalesService
-from decimal import Decimal
+from app.services.order_analytics_service import OrderAnalyticsService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,7 +13,7 @@ router = APIRouter(prefix="/api/v1/orders", tags=["orders"])
 def create_order(order: OrderCreate, db: Session = Depends(get_db)):
     """Create a new order"""
     try:
-        created_order = SalesService.create_order(
+        created_order = OrderAnalyticsService.create_order(
             db=db,
             product_name=order.product_name,
             quantity=order.quantity,
@@ -38,7 +37,7 @@ def get_orders(
 ):
     """Get all orders with pagination"""
     try:
-        orders = SalesService.get_all_orders(db, limit=limit, offset=offset)
+        orders = OrderAnalyticsService.get_all_orders(db, limit=limit, offset=offset)
         return orders
     except Exception as e:
         logger.error(f"Error fetching orders: {str(e)}")
@@ -52,7 +51,7 @@ def get_orders(
 def get_recent_orders(limit: int = 20, db: Session = Depends(get_db)):
     """Get recent orders for real-time display"""
     try:
-        orders = SalesService.get_recent_orders(db, limit=limit)
+        orders = OrderAnalyticsService.get_recent_orders(db, limit=limit)
         return orders
     except Exception as e:
         logger.error(f"Error fetching recent orders: {str(e)}")

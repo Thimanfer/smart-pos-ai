@@ -1,5 +1,8 @@
-from fastapi import APIRouter
-from app.services.sales_service import get_dashboard_data
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.services.order_analytics_service import OrderAnalyticsService
 
 router = APIRouter(
     prefix="/sales",
@@ -7,5 +10,5 @@ router = APIRouter(
 )
 
 @router.get("/dashboard")
-def dashboard():
-    return get_dashboard_data()
+def dashboard(db: Session = Depends(get_db)):
+    return OrderAnalyticsService.get_dashboard_data(db)

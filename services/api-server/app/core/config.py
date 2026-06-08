@@ -1,9 +1,15 @@
-from pydantic_settings import BaseSettings
 from typing import Optional
+
+from pydantic import ConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     """Application settings with environment variable support"""
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+    )
     
     # API
     API_VERSION: str = "1.0.0"
@@ -29,9 +35,5 @@ class Settings(BaseSettings):
     FORECAST_DAYS: int = 30
     MIN_HISTORICAL_DAYS: int = 30
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-
 
 settings = Settings()

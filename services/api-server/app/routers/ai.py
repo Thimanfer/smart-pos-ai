@@ -3,12 +3,13 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.ai_service import AIService
 import logging
+from app.models.schemas import ForecastResponse
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/ai", tags=["ai"])
 
 
-@router.get("/forecast/revenue")
+@router.get("/forecast/revenue", response_model=ForecastResponse)
 def get_revenue_forecast(
     days: int = Query(30, ge=1, le=90),
     db: Session = Depends(get_db)

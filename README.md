@@ -1,349 +1,336 @@
-<<<<<<< HEAD
-# Smart POS AI - Enterprise Dashboard
+# RetailPulse AI
 
-## 📊 Overview
+**RetailPulse AI** là tên tôi đề xuất cho dự án này: một hệ thống POS thông minh kết hợp dashboard realtime, phân tích doanh thu và dự báo AI để hỗ trợ ra quyết định cho cửa hàng/bán lẻ.
 
-**Smart POS AI** là một hệ thống quản lý POS (Point of Sale) hiện đại với các tính năng AI nâng cao, được xây dựng để phục vụ các tập đoàn lớn. Project bao gồm:
+## 1. Mục đích dự án
 
-- **Backend**: FastAPI + SQLAlchemy + Machine Learning
-- **Frontend**: Next.js 14 + TypeScript + Tailwind CSS + Recharts
-- **Database**: SQLite (có thể nâng cấp sang PostgreSQL)
-- **Features**: Dashboard realtime, AI forecasting, Anomaly detection
+Dự án được xây dựng để mô phỏng và hoàn thiện một luồng end-to-end thực tế:
 
-## ✨ Key Features
+- POS simulator tạo đơn hàng.
+- API backend ghi dữ liệu vào cơ sở dữ liệu.
+- Dashboard frontend hiển thị realtime.
+- AI service phân tích, dự báo doanh thu và phát hiện bất thường.
 
-### 📈 Dashboard Analytics
-- **Chart doanh thu**: Biểu đồ doanh số bán hàng hàng ngày
-- **AI dự đoán doanh thu**: Dự báo doanh thu 30-90 ngày sử dụng ML
-- **Top selling products**: Top sản phẩm bán chạy nhất
-- **Orders realtime**: Theo dõi đơn hàng trực tiếp
+Mục tiêu triển khai là biến dự án thành một hệ thống có thể chạy được, test được, mở rộng được và có cấu trúc đủ rõ để bàn giao hoặc tiếp tục phát triển.
 
-### 🤖 AI & ML Features
-- Revenue forecasting với Linear Regression
-- Product demand prediction
-- Anomaly detection trong sales data
-- Statistical analysis (Z-score)
+## 2. Mô tả dự án
 
-### 🔄 Realtime Updates
-- Realtime orders tracking
-- Auto-refresh dashboard mỗi 1 phút
-- WebSocket support (ready for expansion)
+Đây là một nền tảng quản lý bán hàng thông minh gồm 3 lớp chính:
 
-## 🏗️ Project Structure
+- **Frontend**: dashboard web cho người dùng theo dõi đơn hàng, doanh thu, biểu đồ và dự báo.
+- **Backend**: API FastAPI xử lý đơn hàng, thống kê, forecasting và các endpoint phục vụ dashboard.
+- **Simulator**: công cụ giả lập POS để đẩy dữ liệu thật vào hệ thống nhằm kiểm tra realtime flow.
 
-```
+Các chức năng chính hiện có:
+
+- Tạo và xem đơn hàng.
+- Dashboard thống kê doanh thu, tổng đơn, top sản phẩm.
+- Biểu đồ doanh thu theo ngày.
+- Dự báo doanh thu bằng AI.
+- Phát hiện bất thường trong dữ liệu bán hàng.
+- Kiểm tra realtime bằng POS simulator.
+
+## 3. Cách chúng ta phát triển dự án
+
+Tôi phát triển theo hướng sau:
+
+- **Ưu tiên luồng end-to-end trước**: đảm bảo simulator -> API -> DB -> dashboard chạy thông suốt.
+- **Sau đó mới siết chất lượng**: thêm migration, schema response, test, CI.
+- **Tối ưu ít rủi ro trước**: đổi tên module theo hướng đúng chức năng nhưng vẫn giữ alias tương thích để không phá luồng cũ.
+- **Xác thực liên tục**: mỗi thay đổi đều được chạy `pytest` để kiểm tra ngay.
+
+Cách này giúp dự án không chỉ “chạy được” mà còn có nền tảng để mở rộng tiếp.
+
+## 4. Công nghệ sử dụng
+
+### Backend
+- **FastAPI**: xây dựng API nhanh, rõ ràng, hỗ trợ validation tốt.
+- **SQLAlchemy 2.x**: ORM làm việc với database.
+- **Pydantic v2**: validate request/response schema.
+- **Alembic**: quản lý migrations.
+- **SQLite**: database local cho dev/test.
+- **scikit-learn / numpy / pandas**: phục vụ logic AI/forecasting.
+
+### Frontend
+- **Next.js**: giao diện web.
+- **TypeScript**: tăng độ an toàn kiểu dữ liệu.
+- **Tailwind CSS**: dựng UI nhanh và đồng bộ.
+- **Recharts**: biểu đồ.
+- **Axios**: gọi API.
+
+### Tooling
+- **pytest**: test backend.
+- **GitHub Actions**: CI chạy migration và test.
+- **PowerShell / Windows**: môi trường phát triển chính trong workspace này.
+
+## 5. Kết quả đã triển khai
+
+- Tạo backend FastAPI và các router chính.
+- Hoàn thiện luồng tạo đơn hàng.
+- Kết nối dashboard realtime với dữ liệu thật.
+- Sửa lỗi forecasting AI do sai kiểu dữ liệu.
+- Thêm seeder để tạo dữ liệu lịch sử nhiều ngày.
+- Thêm Alembic migrations.
+- Chuẩn hóa response models cho dashboard và AI.
+- Thêm test cho orders, dashboard và AI.
+- Thêm CI workflow chạy migrations + tests.
+- Tối ưu cấu trúc package Python và giảm warning Pydantic.
+- Refactor naming nội bộ từ `sales` sang `order_analytics` nhưng vẫn giữ tương thích cũ.
+
+## 6. Kiến trúc dự án
+
+```text
 smart-pos-ai/
 ├── apps/
-│   └── dashboard-web/                 # Frontend Next.js
-│       ├── src/
-│       │   ├── app/                   # Next.js App Router
-│       │   │   ├── page.tsx           # Dashboard page
-│       │   │   ├── orders/            # Orders page
-│       │   │   ├── analytics/         # Analytics page
-│       │   │   ├── forecast/          # AI Forecast page
-│       │   │   ├── layout.tsx         # Root layout
-│       │   │   ├── globals.css        # Global styles
-│       │   │   └── providers.tsx      # Query client provider
-│       │   ├── components/            # Reusable components
-│       │   │   ├── StatCard.tsx       # Stat card component
-│       │   │   ├── Charts.tsx         # Chart components
-│       │   │   ├── RealtimeOrders.tsx # Realtime table
-│       │   │   ├── Sidebar.tsx        # Navigation
-│       │   │   ├── Header.tsx         # Top header
-│       │   │   └── Skeleton.tsx       # Loading skeletons
-│       │   ├── hooks/                 # Custom React hooks
-│       │   │   └── useApi.ts          # API hooks
-│       │   ├── services/              # API services
-│       │   │   ├── apiClient.ts       # Axios instance
-│       │   │   └── api.ts             # API functions
-│       │   ├── types/                 # TypeScript types
-│       │   │   └── index.ts           # Type definitions
-│       │   └── store/                 # State management (Zustand)
-│       ├── package.json
-│       ├── tsconfig.json
-│       ├── tailwind.config.ts
-│       └── .env.local
-│
+│   └── dashboard-web/        # Next.js frontend
 ├── services/
-│   └── api-server/                    # Backend FastAPI
-│       ├── app/
-│       │   ├── core/                  # Core config
-│       │   │   ├── config.py          # Settings
-│       │   │   └── database.py        # DB setup
-│       │   ├── models/                # Database models
-│       │   │   ├── order.py           # Order model
-│       │   │   └── schemas.py         # Pydantic schemas
-│       │   ├── routers/               # API routes
-│       │   │   ├── orders.py          # Orders endpoints
-│       │   │   ├── analytics.py       # Analytics endpoints
-│       │   │   └── ai.py              # AI endpoints
-│       │   ├── services/              # Business logic
-│       │   │   ├── sales_service.py   # Sales operations
-│       │   │   └── ai_service.py      # AI & ML logic
-│       │   └── main.py                # FastAPI app
-│       ├── pos_terminal.py            # POS simulator
-│       ├── requirements.txt
-│       └── data/
-│           └── sales.csv              # Sample data
-│
-├── infra/                             # Infrastructure
-│   ├── config/                        # Config files
-│   └── docker/                        # Docker setup
-│
-├── packages/                          # Shared packages
-│   ├── types/                         # Shared types
-│   ├── ui/                            # Shared UI components
-│   └── utils/                         # Shared utilities
-│
+│   ├── api-server/           # FastAPI backend
+│   └── pos-simulator/        # Mô phỏng POS
+├── infra/                    # cấu hình hạ tầng
+├── packages/                 # shared packages
 └── README.md
 ```
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- npm or yarn
-
-### Backend Setup
-
-```bash
-cd services/api-server
-
-# Create virtual environment
-python -m venv venv
-source venv/Scripts/activate  # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```mermaid
+flowchart LR
+   POS[POS Simulator] --> API[FastAPI Backend]
+   API --> DB[(SQLite Database)]
+   API --> AI[AI Forecast Service]
+   API --> DASH[Next.js Dashboard]
+   DB --> API
+   AI --> DASH
+   DB --> DASH
 ```
 
-API will be available at: `http://localhost:8000`
-- Docs: `http://localhost:8000/docs`
+```mermaid
+flowchart TB
+   subgraph Frontend[Frontend Layer]
+      WEB[Next.js Dashboard]
+   end
 
-### Frontend Setup
+   subgraph Backend[Backend Layer]
+      API[FastAPI API Server]
+      AI[AI / Forecast Service]
+   end
 
-```bash
-cd apps/dashboard-web
+   subgraph Data[Data Layer]
+      DB[(SQLite Database)]
+      SIM[POS Simulator]
+   end
 
-# Install dependencies
+   SIM --> API
+   WEB --> API
+   API --> DB
+   API --> AI
+   AI --> API
+   DB --> API
+   API --> WEB
+```
+
+```mermaid
+flowchart TD
+   A[Start at project root] --> B[Open Terminal 1: backend]
+   B --> C[Activate .venv]
+   C --> D[cd services/api-server]
+   D --> E[Run pytest -q]
+   E --> F[Run uvicorn app.main:app --reload]
+
+   A --> G[Open Terminal 2: frontend]
+   G --> H[cd apps/dashboard-web]
+   H --> I[npm install]
+   I --> J[npm run dev]
+
+   A --> K[Open Terminal 3: simulator]
+   K --> L[Activate .venv]
+   L --> M[cd services/api-server]
+   M --> N[Run python pos_terminal.py]
+
+   A --> O[Optional: seed history]
+   O --> P[Run python scripts/seed_history.py]
+
+   F --> Q[Backend API ready]
+   J --> R[Dashboard ready]
+   N --> S[Realtime orders stream]
+   P --> T[Historical data ready for AI]
+
+   Q --> U[Open http://localhost:3000]
+   R --> U
+   S --> U
+   T --> U
+   U --> V[View stats, charts, orders, forecast]
+```
+
+Backend chính nằm ở `services/api-server`:
+
+- `app/main.py`: khởi tạo FastAPI.
+- `app/routers/`: các endpoint orders, analytics, ai.
+- `app/services/`: logic nghiệp vụ và AI.
+- `app/models/`: ORM models và Pydantic schemas.
+- `alembic/`: migration.
+- `tests/`: test backend.
+- `pos_terminal.py`: simulator tạo đơn hàng.
+
+## 7. Kế hoạch phát triển tiếp theo
+
+- Bổ sung xác thực người dùng (JWT/login).
+- Tách rõ hơn module domain và service layer.
+- Làm realtime tốt hơn bằng WebSocket/SSE.
+- Nâng cấp AI forecasting với mô hình mạnh hơn.
+- Thêm export báo cáo PDF/Excel.
+- Chuẩn bị triển khai production bằng Docker/Kubernetes hoặc cloud.
+- Làm mobile app hoặc companion app nếu cần.
+
+## 8. Cách chạy dự án để test đầy đủ
+
+Nếu bạn muốn bản rút gọn, mở [QUICK_RUN.md](QUICK_RUN.md).
+
+### Yêu cầu môi trường
+- Python 3.13+ (đúng với workspace hiện tại).
+- Node.js 18+.
+- npm.
+- Terminal PowerShell trên Windows.
+
+### 8.1 Chạy backend
+
+Nếu bạn mở terminal ngay tại thư mục gốc dự án `C:\ABE\smart-pos-ai`:
+
+```powershell
+& .\.venv\Scripts\Activate.ps1
+cd services\api-server
+pytest -q
+uvicorn app.main:app --reload
+```
+
+Nếu terminal của bạn đã ở sẵn `services\api-server` và `.venv` đã được activate, chỉ cần chạy:
+
+```powershell
+pytest -q
+uvicorn app.main:app --reload
+```
+
+Backend sẽ chạy tại:
+- API: `http://127.0.0.1:8000`
+- Docs: `http://127.0.0.1:8000/docs`
+
+### 8.2 Chạy frontend
+
+```powershell
+cd apps\dashboard-web
 npm install
-
-# Create .env.local
-# NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-
-# Run development server
 npm run dev
 ```
 
-Dashboard will be available at: `http://localhost:3000`
+Lưu ý: `npm run dev` sẽ giữ terminal chạy liên tục, đây là hành vi bình thường.
 
-## 📊 API Endpoints
+Frontend sẽ chạy tại:
+- Dashboard: `http://localhost:3000`
+
+### 8.3 Chạy POS simulator
+
+Mở terminal khác:
+
+```powershell
+cd services/api-server
+& ..\..\.venv\Scripts\Activate.ps1
+python pos_terminal.py
+```
+
+Simulator sẽ đẩy đơn hàng mới liên tục để dashboard cập nhật realtime.
+
+### 8.4 Seed dữ liệu lịch sử để AI forecast hoạt động tốt hơn
+
+Nếu muốn xem forecast đầy đủ, cần dữ liệu lịch sử nhiều ngày:
+
+```powershell
+cd services/api-server
+& ..\..\.venv\Scripts\Activate.ps1
+python scripts/seed_history.py
+```
+
+### 8.5 Kiểm tra luồng đầy đủ
+
+Sau khi chạy đủ 3 thành phần trên:
+
+1. Mở `http://localhost:3000`.
+2. Vào trang dashboard.
+3. Kiểm tra:
+   - Stats cards.
+   - Biểu đồ doanh thu.
+   - Top products.
+   - Danh sách orders realtime.
+   - AI revenue forecast.
+4. Mở `http://127.0.0.1:8000/docs` để test API trực tiếp.
+
+## 9. Các endpoint chính
 
 ### Dashboard
-- `GET /api/v1/dashboard` - Complete dashboard data
-- `GET /api/v1/dashboard/stats` - Dashboard statistics
-- `GET /api/v1/dashboard/sales/daily?days=30` - Daily sales
-- `GET /api/v1/dashboard/products/top?limit=10` - Top products
+- `GET /api/v1/dashboard`
+- `GET /api/v1/dashboard/stats`
+- `GET /api/v1/dashboard/sales/daily?days=30`
+- `GET /api/v1/dashboard/products/top?limit=10`
 
 ### Orders
-- `GET /api/v1/orders` - Get all orders
-- `GET /api/v1/orders/recent?limit=20` - Get recent orders
-- `POST /api/v1/orders` - Create new order
+- `GET /api/v1/orders`
+- `GET /api/v1/orders/recent?limit=20`
+- `POST /api/v1/orders`
 
-### AI & Forecasting
-- `GET /api/v1/ai/forecast/revenue?days=30` - Revenue forecast
-- `GET /api/v1/ai/forecast/product/{product_name}` - Product demand prediction
-- `GET /api/v1/ai/anomalies?threshold=2.0` - Anomaly detection
+### AI
+- `GET /api/v1/ai/forecast/revenue?days=30`
+- `GET /api/v1/ai/forecast/product/{product_name}`
+- `GET /api/v1/ai/anomalies?threshold=2.0`
 
-## 🛠️ Tech Stack
+## 10. Kiểm thử toàn bộ chức năng
 
-### Backend
-- **FastAPI**: Modern async Python web framework
-- **SQLAlchemy**: ORM for database operations
-- **Pydantic**: Data validation
-- **scikit-learn**: Machine learning
-- **pandas**: Data analysis
+### Chạy test backend
 
-### Frontend
-- **Next.js 14**: React framework with App Router
-- **TypeScript**: Type-safe JavaScript
-- **Tailwind CSS**: Utility-first CSS
-- **Recharts**: React charting library
-- **TanStack Query**: Data fetching & caching
-- **Zustand**: State management
-- **Axios**: HTTP client
-
-## 🔐 Security Features
-
-- ✅ CORS middleware configured
-- ✅ Request/Response validation with Pydantic
-- ✅ Error handling & logging
-- ✅ Type-safe across backend & frontend
-- ✅ Environment variables support
-
-## 📈 Performance Optimization
-
-- **Frontend**: React Query caching, automatic refetching
-- **Backend**: Database query optimization, efficient aggregations
-- **Rendering**: Component-level code splitting, lazy loading
-- **API**: Pagination support for large datasets
-
-## 🚀 Production Deployment
-
-### Backend
-```bash
-# Using Gunicorn + Uvicorn
-gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+```powershell
+cd services/api-server
+pytest -q
 ```
 
-### Frontend
-```bash
-npm run build
-npm start
-```
+### Kiểm tra API nhanh
 
-### Docker Setup
-```bash
-# Build containers
-docker-compose up -d
+- `GET http://127.0.0.1:8000/health`
+- `GET http://127.0.0.1:8000/api/v1/dashboard`
+- `GET http://127.0.0.1:8000/api/v1/orders/recent?limit=5`
+- `GET http://127.0.0.1:8000/api/v1/ai/forecast/revenue?days=7`
 
-# Available at localhost:3000 and localhost:8000
-```
+### Kiểm tra UI
 
-## 📝 Environment Variables
+- Dashboard page.
+- Orders page.
+- Analytics page.
+- Forecast page.
 
-### Backend (.env)
-```
-DATABASE_URL=sqlite:///./smart_pos.db
-SECRET_KEY=your-secret-key
-CORS_ORIGINS=["http://localhost:3000"]
-FORECAST_DAYS=30
-```
+## 11. Troubleshooting nhanh
 
-### Frontend (.env.local)
-```
-NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_WS_URL=ws://localhost:8000
-```
+### Frontend không gọi được API
+- Kiểm tra backend đã chạy chưa.
+- Kiểm tra biến môi trường `NEXT_PUBLIC_API_URL`.
+- Kiểm tra CORS trong backend.
 
-## 🐛 Troubleshooting
+### Dashboard không có dữ liệu
+- Chạy `pos_terminal.py` để sinh order.
+- Chạy `scripts/seed_history.py` nếu muốn có dữ liệu lịch sử.
 
-### CORS Issues
-Ensure `CORS_ORIGINS` in backend config includes your frontend URL.
+### Forecast trống
+- Cần đủ dữ liệu lịch sử.
+- Dữ liệu ít quá thì AI service sẽ trả về forecast hạn chế.
 
-### Data Not Displaying
-- Check API is running on port 8000
-- Verify database has data (run pos_terminal.py to generate)
-- Check browser console for API errors
+### Lỗi import Python
+- Luôn chạy test/backend từ `services/api-server`.
+- Dùng virtual environment của workspace.
 
-### Forecast Not Working
-- Need at least 30 days of historical data
-- Run pos_terminal.py for several minutes to generate data
-- Check `FORECAST_DAYS` setting
+## 12. Phát hành và CI
 
-## 📚 Next Steps
+Đã có workflow GitHub Actions để:
 
-- [ ] Add authentication (JWT)
-- [ ] Implement WebSocket for true realtime
-- [ ] Add more ML models (Prophet, ARIMA)
-- [ ] Database migration to PostgreSQL
-- [ ] Add user management
-- [ ] Export reports (PDF/Excel)
-- [ ] Mobile app support
-- [ ] Multi-language support
+- Cài dependencies.
+- Chạy Alembic migrations.
+- Chạy test backend.
 
-## 📄 License
-
-MIT License
-
-## 👨‍💼 Author
-
-Smart POS AI Team - Enterprise Dashboard Solution
+Điều này giúp dự án có nền tảng kiểm soát chất lượng trước khi deploy.
 
 ---
 
-**Last Updated**: May 11, 2026
-=======
-# Smart POS AI
-
-Smart POS AI is a modern Point of Sale platform that provides real-time order processing, analytics dashboards and a foundation for AI-powered retail intelligence.
-
-## Current Status
-
-The project currently includes:
-
-* Real-time order ingestion
-* FastAPI backend services
-* Next.js dashboard
-* POS simulator for generating sales data
-* Analytics and forecasting modules
-* Docker-based development environment
-
-## Tech Stack
-
-### Frontend
-
-* Next.js
-* TypeScript
-* React Query
-* TailwindCSS
-
-### Backend
-
-* FastAPI
-* Python
-* SQLite (development)
-
-### Infrastructure
-
-* Docker
-* Docker Compose
-
-## Architecture
-
-POS Simulator → API Server → Realtime Dashboard
-
-## Project Structure
-
-apps/
-
-* dashboard-web
-
-services/
-
-* api-server
-* pos-simulator
-* ai-engine
-
-packages/
-
-* shared modules
-
-## Development Roadmap
-
-### Short Term
-
-* Inventory management
-* Customer management
-* WebSocket/SSE realtime updates
-
-### Medium Term
-
-* AI demand forecasting
-* Inventory optimization
-* Anomaly detection
-
-### Long Term
-
-* AI retail assistant
-* Natural language analytics
-* Autonomous retail operations
-
-## Vision
-
-To build an AI-powered retail operating system that helps businesses make smarter operational decisions through automation, forecasting and real-time intelligence.
->>>>>>> ae0251023cf199d4bfa0508534d70a74a19e2563
+Nếu bạn muốn, tôi có thể tiếp tục làm tiếp một bước nữa: viết thêm một file `docs/README-VI.md` ngắn gọn hơn cho người mới, hoặc làm sơ đồ kiến trúc Mermaid trong README.

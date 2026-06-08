@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.schemas import DashboardResponse, DashboardStats, DailySales
-from app.services.sales_service import SalesService
+from app.services.order_analytics_service import OrderAnalyticsService
 from app.services.ai_service import AIService
 import logging
 
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
 def get_dashboard_stats(db: Session = Depends(get_db)):
     """Get dashboard statistics"""
     try:
-        stats = SalesService.get_dashboard_stats(db)
+        stats = OrderAnalyticsService.get_dashboard_stats(db)
         return stats
     except Exception as e:
         logger.error(f"Error fetching dashboard stats: {str(e)}")
@@ -24,13 +24,13 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         )
 
 
-@router.get("")
+@router.get("", response_model=DashboardResponse)
 def get_dashboard(db: Session = Depends(get_db)):
     """Get complete dashboard data"""
     try:
-        stats = SalesService.get_dashboard_stats(db)
-        top_products = SalesService.get_top_products(db, limit=5)
-        daily_sales = SalesService.get_daily_sales(db, days=30)
+        stats = OrderAnalyticsService.get_dashboard_stats(db)
+        top_products = OrderAnalyticsService.get_top_products(db, limit=5)
+        daily_sales = OrderAnalyticsService.get_daily_sales(db, days=30)
         revenue_forecast = AIService.get_revenue_forecast(db, days=30)
         
         return {
@@ -54,7 +54,7 @@ def get_daily_sales(days: int = 30, db: Session = Depends(get_db)):
         if days < 1 or days > 365:
             raise ValueError("Days must be between 1 and 365")
         
-        daily_sales = SalesService.get_daily_sales(db, days=days)
+        daily_sales = OrderAnalyticsService.get_daily_sales(db, days=days)
         return {"daily_sales": daily_sales}
     except Exception as e:
         logger.error(f"Error fetching daily sales: {str(e)}")
@@ -71,7 +71,7 @@ def get_top_products(limit: int = 10, db: Session = Depends(get_db)):
         if limit < 1 or limit > 100:
             raise ValueError("Limit must be between 1 and 100")
         
-        products = SalesService.get_top_products(db, limit=limit)
+        products = OrderAnalyticsService.get_top_products(db, limit=limit)
         return {"top_products": products}
     except Exception as e:
         logger.error(f"Error fetching top products: {str(e)}")

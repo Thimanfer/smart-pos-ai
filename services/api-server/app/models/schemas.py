@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 from typing import List, Optional
 from decimal import Decimal
@@ -22,9 +22,7 @@ class Order(OrderBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DashboardStats(BaseModel):
@@ -66,6 +64,13 @@ class DashboardResponse(BaseModel):
     top_products: List[ProductSales]
     daily_sales: List[DailySales]
     revenue_forecast: List[ForecastData]
+
+
+class ForecastResponse(BaseModel):
+    """Standardized forecast response for AI endpoints"""
+    forecast_days: int
+    forecast: List[ForecastData]
+    generated_at: Optional[str] = None
 
 
 class OrderResponse(BaseModel):
